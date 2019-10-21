@@ -1,0 +1,132 @@
+ # TP 7 - Boot, services et processus / Tâches
+
+
+
+
+<h1>Exercice 1. Personnalisation de GRUB </h1>
+
+<ol>
+<li><h3>Commencez par changer l’extension du fichier /etc/default/grub.d/50-curtin-settings.cfg s’il
+est présent dans votre environnement (vous pouvez aussi commenter son contenu).<h3></li>
+
+*Nous allons commenter dans le fichier de config e GRUB_TERMINAL la valeur console, ce qui désactive
+tous les paramètres liés aux fonds d’écran, thèmes, certaines résolutions, etc*
+
+<code>
+sudo nano 50-curtin-settings.cfg
+</code>
+
+
+<li><h3>Modifiez le fichier /etc/default/grub pour que le menu de GRUB s’affiche pendant 10 secondes ;
+passé ce délai, le premier OS du menu doit être lancé automatiquement.
+<h3></li>
+
+*nous allons rajouter un 10 sec de delais puis suite a sa lancer le menu*
+
+<code>
+GRUB_TIMEOUT=10
+GRUB_TIMEOUT_STYLE=menu
+</code>
+
+
+<li><h3>Lancez la commande update-grub<h3></li>
+
+*Cette commande fait appel au script grub-mkconfig qui construit le fichier de configuration
+”final” de GRUB (/boot/grub/grub.cfg) à partir du fichier de paramètres et des scripts.*
+
+<li><h3>Redémarrez votre VM pour valider que les changements ont bien été pris en compte
+</h3></li>
+
+*Pensez à lancer la commande update-grub après chaque modification de la configuration de
+GRUB !*
+
+<li><h3>On va augmenter la résolution de GRUB et de notre VM. Cherchez sur Internet le ou les paramètres
+à rajouter au fichier grub.
+</h3></li>
+
+*Résolution d'affichage
+vbeinfo
+Quand on est sur le menu grub, on appuie sur « c ». On est ainsi en ligne de commande. On lancera alors la commande :*
+
+<code>
+vbeinfo
+</code>
+*on affiche toute les résolutions d'écrand puis on modifie le fichier grub*
+
+<h4>GRUB_GFXMODE
+Sur le fichier /etc/default/grub, on modifiera le paramètre GRUB_GFXMODE qui définit la résolution d'affichage pour Grub ainsi (sans « # » devant) :</h4>
+
+<code>GRUB_GFXMODE=1280x1024,1024x768x32
+set gfxpayload=1024x768
+</code>
+
+<li><h3>On va à présent ajouter un fond d’écran. Il existe un paquet en proposant quelques uns : grub2-splash-images
+(après installation, celles-ci sont disponibles dans /usr/share/images/grub)
+</h3></li>
+
+<h4>Fond d'écran
+Pré-requis
+GRUB_GFXMODE doit être défini (→ voir plus haut)
+une image dans un format compatible avec la capacité d'affichage de grub (→ voir plus haut)
+Convertir l'image
+Si vous avez Gimp d'installé ou au moins ImageMagick, vous pourrez lancer cette commande de conversion en l'adaptant à vos besoins :</h4>
+
+<code>
+convert ~/Images/"image exemple.jpg" -resize 1280x1024! -depth 16 ~/Bureau/"00_image_de_fond.jpg"
+sudo mv ~/Bureau/"00_image_de_fond.jpg" /boot/grub/.
+</code>
+
+<h4>Utilisation
+Pour l'utiliser, on ajoutera le paramètre GRUB_BACKGROUND au fichier /etc/default/grub </h4>
+
+<code>GRUB_BACKGROUND="/boot/grub/00_image_de_fond.jpg"</code>
+
+*Lancer ensuite la commande de mise à jour :*
+
+<code>sudo update-grub</code>
+
+*cherhcer une image sur internet*
+
+<code> wget images3.memedroid.com/images/UPLOADED296/5d6f97b40a0b0.jpeg</code>
+
+<li><h3>Il est également possible de configurer des thèmes. On en trouve quelques uns dans les dépôts (grub2-themes-*).
+Installez-en un.
+</h3></li>
+
+*Dans le fichier /etc/default/grub, on renseignera le paramètre GRUB_THEME ainsi :*
+
+<code>GRUB_THEME="/boot/grub/themes/ubuntu-mate/theme.txt"</code>
+
+
+<li><h3>Ajoutez une entrée permettant d’arrêter la machine, et une autre permettant de la redémarrer
+</h3></li>
+
+*Entrée menu "Restart"*
+
+<code>Fichier: /etc/grub.d/40_custom ou /boot/grub/custom.cfg
+
+menuentry "System restart" {
+	echo "System rebooting..."
+	reboot
+}
+
+</code>
+
+*Entrée menu "Shutdown"*
+
+
+
+<code>Fichier: /etc/grub.d/40_custom ou /boot/grub/custom.cfg
+
+menuentry "System shutdown" {
+	echo "System shutting down..."
+	halt
+}
+
+</code>
+
+</ol>
+
+
+
+
